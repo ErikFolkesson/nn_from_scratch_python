@@ -1,7 +1,6 @@
 import numpy as np
 from neural_network.activation import Activation
 
-
 class Dense:
     """
     A dense layer class representing a fully connected neural network layer.
@@ -30,16 +29,16 @@ class Dense:
         self.bias = np.random.randn(output_size, 1)
         self.activation = Activation(activation)
 
-    def call(self, x):
+    def call(self, X):
         """
         Computes the output of the dense layer for a given input.
 
         Args:
-            x (np.ndarray): The input array to the layer.
+            x (np.ndarray): The input matrix to the layer.
 
         Returns:
             np.ndarray: The output of the layer after applying the weights,
             biases, and activation function.
         """
-        z = np.dot(self.weights, x) + self.bias
-        return self.activation.activate(z)
+        Z = np.dot(self.weights, X) + self.bias
+        return self.activation.activate(Z)
