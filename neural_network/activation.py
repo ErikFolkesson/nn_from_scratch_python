@@ -1,0 +1,45 @@
+import numpy as np
+
+class Activation:
+    """
+    A class to represent an activation function for use in neural networks.
+
+    Currently supports the ReLU activation function.
+
+    Attributes:
+        activation_type (str): The type of the activation function. Currently,
+                               only 'relu' is supported.
+    """
+
+    def __init__(self, activation_type):
+        """
+        Initializes the Activation class with the specified activation type.
+
+        Validates the input to ensure it is a supported activation type.
+
+        Args:
+            activation_type (str): The type of the activation function to use.
+
+        Raises:
+            TypeError: If the activation_type is not a string.
+            ValueError: If the activation_type is not supported.
+        """
+        if not isinstance(activation_type, str):
+            raise TypeError("activation_type must be a string")
+        if activation_type != "relu":
+            raise ValueError("activation_type can currently only be 'relu'")
+
+        self.activation_type = activation_type
+
+    def activate(self, z):
+        """
+        Applies the activation function to the input array.
+
+        Args:
+            z (np.ndarray): The input array to the activation function.
+
+        Returns:
+            np.ndarray: The output of the activation function.
+        """
+        if self.activation_type == "relu":
+            return np.maximum(0, z)
