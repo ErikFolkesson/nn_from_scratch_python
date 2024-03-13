@@ -1,5 +1,6 @@
 import numpy as np
 from neural_network.activation import Activation
+from neural_network.optimizer import Optimizer
 
 class Dense:
     """
@@ -40,5 +41,24 @@ class Dense:
             np.ndarray: The output of the layer after applying the weights,
             biases, and activation function.
         """
-        Z = np.dot(self.weights, X) + self.bias
-        return self.activation.activate(Z)
+        assert X.shape[0] == self.weights.shape[1], f"The number of rows in X is {X.shape[0]} which is not equal to the number of weight columns which is {self.weights.shape[1]}."
+
+        N = np.dot(self.weights, X)
+        Y_hat = self.activation.activate(N + self.bias)
+        return Y_hat, N
+
+    def input_shape(self):
+        return self.input_size
+
+    def get_bias(self):
+        return self.bias
+
+    def get_weights(self):
+        return self.weights
+
+    def update_parameters(self, loss_gradients, learning_rate):
+        dLdW = loss_gradients['dW']
+        dLdB = loss_gradients['dB']
+
+        self.weights -= learning_rate * dLdW
+        self.bias -= learning_rate * dLdB
