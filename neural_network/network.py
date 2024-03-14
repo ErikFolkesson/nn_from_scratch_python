@@ -4,6 +4,7 @@ from neural_network.optimizer import Optimizer
 from neural_network.layers import Dense
 from typing import Dict
 from numpy import ndarray
+from sklearn.model_selection import train_test_split
 
 class Network:
     """
@@ -30,7 +31,7 @@ class Network:
         Trains the network
     """
 
-    def __init__(self, layers, optimizer, cost):
+    def __init__(self, layers, cost, optimizer=None):
         """
         Constructs all the necessary attributes for the Network object.
 
@@ -54,7 +55,7 @@ class Network:
         if not isinstance(layers, list) or not all(isinstance(layer, Dense) for layer in layers):
             raise TypeError("layers must be a list of Layer instances")
 
-        if not isinstance(optimizer, Optimizer):
+        if optimizer is not None and not isinstance(optimizer, Optimizer):
             raise TypeError("optimizer must be of type optimizer")
 
         if not isinstance(cost, Cost):
@@ -147,7 +148,7 @@ class Network:
         dA = np.dot(cache[f'W_{l}'].T, dZ) if l > 0 else None
         return dZ, dW, db, dA
 
-    def train(self, X, Y, epochs, learning_rate=0.01, debug=False):
+    def train(self, X, Y, epochs, learning_rate=0.01, validation_split=None):
         """
         Trains the network.
 
@@ -161,17 +162,61 @@ class Network:
                 Number of epochs to train the network
             learning_rate : float, optional
                 Learning rate for the optimizer (default is 0.01)
-            debug : bool, optional
-                If True, print debug information every 100 epochs (default is False)
+            validation_split : float, optional
+                Fraction of the data to be used as validation data (default is 0.2)
+
+        Returns
+        -------
+        training_progress : dict
+            Dictionary containing the training progress, including the cost at each epoch and validation cost
         """
 
+        # Split the data into training and validation sets
+        X = X.T
+        Y = Y.T
+
+        if validation_split == None: # If no validation split is provided, use the entire dataset for training
+            X_train, X_val, Y_train, Y_val = X, X, Y, Y
+        else:
+            # Shuffle the indices of the data
+            indices = np.random.permutation(X.shape[1])
+
+            # Split the indices into training and validation sets
+            split_idx = int((1 - validation_split) * X.shape[1])
+            train_idx, val_idx = indices[:split_idx], indices[split_idx:]
+
+            # Create the training and validation sets
+            X_train, X_val = X[:, train_idx], X[:, val_idx]
+            Y_train, Y_val = Y[train_idx], Y[val_idx]
+
+            print(f"X_train shape: {X_train.shape}")
+            print(f"First 5 elements of Y_train: {Y_train[:5]}")
+            print(f"X_val shape: {X_val.shape}")
+            print(f"First 5 elements of Y_val: {Y_val[:5]}")
+
+
+        training_progress = {
+            'cost': [],
+            'val_cost': [],  # Validation cost
+            # Add more metrics here in the future
+        }
+
         for epoch in range(epochs):
-            cache = self.forward_prop(X, Y)
-            loss_gradients = self.backwards_prop(Y, cache)
+            # Train on the training data
+            cache = self.forward_prop(X_train, Y_train)
+            loss_gradients = self.backwards_prop(Y_train, cache)
             self._update_parameters(loss_gradients, learning_rate)
 
-            if debug and epoch % 100 == 0:  # Print every 1 epochs
-                self._print_debug_info(epoch, cache, loss_gradients)
+            # Save the cost at each epoch
+            training_progress['cost'].append(cache['loss'])
+
+            # Calculate and save the validation cost
+            val_cache = self.forward_prop(X_val, Y_val)
+            training_progress['val_cost'].append(val_cache['loss'])
+
+            # Save other metrics here in the future
+
+        return training_progress
 
     def _update_parameters(self, loss_gradients, learning_rate):
         """Updates the parameters of the network using the gradients and the learning rate."""
