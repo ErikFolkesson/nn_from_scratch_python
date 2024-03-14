@@ -9,7 +9,7 @@ class Cost:
 
         self.cost_func = cost_func
 
-    def calc_cost(self, Y_hat, Y):
+    def calc_cost(self, Y_hat, Y, m):
         """
         Calculate the cost of the prediction based on the given cost function and predicted and actual values.
 
@@ -21,5 +21,4 @@ class Cost:
             float: The calculated cost.
         """
         if self.cost_func == "MSE":
-            m, _ = Y_hat.shape
             return 1/(2*m) * np.sum(np.square(Y_hat - Y))

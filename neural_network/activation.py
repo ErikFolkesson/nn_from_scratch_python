@@ -47,3 +47,18 @@ class Activation:
             return np.maximum(0, Z)
         elif self.activation_type == "none":
             return Z
+
+    def activation_derivative(self, Z):
+        """
+        Computes the gradient of the activation function.
+
+        Args:
+            Z (np.ndarray): The input array to the activation function.
+
+        Returns:
+            np.ndarray: The gradient of the activation function.
+        """
+        if self.activation_type == "relu":
+            return Z > 0
+        elif self.activation_type == "none":
+            return np.ones_like(Z)

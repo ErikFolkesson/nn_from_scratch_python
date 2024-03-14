@@ -43,9 +43,9 @@ class Dense:
         """
         assert X.shape[0] == self.weights.shape[1], f"The number of rows in X is {X.shape[0]} which is not equal to the number of weight columns which is {self.weights.shape[1]}."
 
-        N = np.dot(self.weights, X)
-        Y_hat = self.activation.activate(N + self.bias)
-        return Y_hat, N
+        Z = np.dot(self.weights, X)
+        A = self.activation.activate(Z + self.bias)
+        return A, Z
 
     def input_shape(self):
         return self.input_size
@@ -56,9 +56,9 @@ class Dense:
     def get_weights(self):
         return self.weights
 
-    def update_parameters(self, loss_gradients, learning_rate):
-        dLdW = loss_gradients['dW']
-        dLdB = loss_gradients['dB']
+    def update_parameters(self, dW, db, learning_rate):
+        self.weights -= learning_rate * dW
+        self.bias -= learning_rate * db
 
-        self.weights -= learning_rate * dLdW
-        self.bias -= learning_rate * dLdB
+    def activation_derivative(self, Z):
+        return self.activation.activation_derivative(Z)
