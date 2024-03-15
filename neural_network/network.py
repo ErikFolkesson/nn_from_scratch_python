@@ -148,7 +148,7 @@ class Network:
         dA = np.dot(cache[f'W_{l}'].T, dZ) if l > 0 else None
         return dZ, dW, db, dA
 
-    def train(self, X, Y, epochs, learning_rate=0.01, validation_split=None):
+    def train(self, X, Y, epochs, learning_rate=0.01, validation_split=None, verbose=False, verbose_percentage=5):
         """
         Trains the network.
 
@@ -171,7 +171,8 @@ class Network:
             Dictionary containing the training progress, including the cost at each epoch and validation cost
         """
 
-        # Split the data into training and validation sets
+        # Temporary fix to handle the shape of the input data
+        # This will be fixed in the future
         X = X.T
         Y = Y.T
 
@@ -189,11 +190,6 @@ class Network:
             X_train, X_val = X[:, train_idx], X[:, val_idx]
             Y_train, Y_val = Y[train_idx], Y[val_idx]
 
-            print(f"X_train shape: {X_train.shape}")
-            print(f"First 5 elements of Y_train: {Y_train[:5]}")
-            print(f"X_val shape: {X_val.shape}")
-            print(f"First 5 elements of Y_val: {Y_val[:5]}")
-
 
         training_progress = {
             'cost': [],
@@ -201,7 +197,7 @@ class Network:
             # Add more metrics here in the future
         }
 
-        for epoch in range(epochs):
+        for epoch in range(epochs + 1):
             # Train on the training data
             cache = self.forward_prop(X_train, Y_train)
             loss_gradients = self.backwards_prop(Y_train, cache)
@@ -211,12 +207,32 @@ class Network:
             training_progress['cost'].append(cache['loss'])
 
             # Calculate and save the validation cost
-            val_cache = self.forward_prop(X_val, Y_val)
-            training_progress['val_cost'].append(val_cache['loss'])
+            if validation_split != None:
+                val_cache = self.forward_prop(X_val, Y_val)
+                training_progress['val_cost'].append(val_cache['loss'])
+            else:
+                training_progress['val_cost'].append(None)
 
-            # Save other metrics here in the future
+            if verbose:
+                self._print_verbose(epoch, epochs, training_progress, verbose_percentage)
 
         return training_progress
+
+    def _print_verbose(self, epoch, epochs, cache, verbose_percentage):
+        """Prints verbose information including progress bar and loss values."""
+
+        progress = (epoch / epochs) * 100
+        filled_length = int(progress / 5)
+        bar = '=' * filled_length + '-' * (20 - filled_length)
+
+        if progress % verbose_percentage == 0 or epoch == epochs:
+            epochs_represented = int((progress / 100) * epochs)
+            print(f'\r[{bar}] Progress: {progress}% - Epoch {epoch}/{epochs} - Loss: {cache["cost"][-1]:.4f} - Validation Loss: {cache["val_cost"][-1]:.4f}')
+            if progress < 100:
+                print('\n')  # Start a new line for the next progress bar
+
+        if epoch == epochs:
+            print('\n')
 
     def _update_parameters(self, loss_gradients, learning_rate):
         """Updates the parameters of the network using the gradients and the learning rate."""
