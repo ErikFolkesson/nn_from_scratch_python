@@ -38,4 +38,4 @@ class Cost:
             float: The calculated cost.
         """
         if self.cost_func == "MSE":
-            return 1/(2*m) * np.sum(np.square(Y_hat - Y))
+            return 1/m * np.sum(np.square(Y_hat - Y))
