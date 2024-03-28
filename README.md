@@ -6,12 +6,8 @@
 5. [Testing](#testing)
 7. [License](#license)
 
-## Introduction
-A brief description of the project.
-
 
 ## Installation
-
 This project is a Python implementation of a Neural Network built from scratch. It is designed to provide a deeper understanding of the inner workings of neural networks by implementing the fundamental components without the use of high-level libraries.
 
 The project includes a Jupyter notebook, `Colab_Housing_Test.ipynb`, which can be run in Google Colab to test the neural network on a housing dataset. The dataset is included in the `data` directory.
@@ -22,7 +18,7 @@ The `local_notebooks` directory contains a `testing.ipynb` notebook for local te
 
 The project is licensed under the MIT License, as detailed in the `LICENSE` file.
 
-
+## Installation
 1. Clone the repository:
     ```bash
     git clone https://github.com/ErikFolkesson/nn_from_scratch_python.git
