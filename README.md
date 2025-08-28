@@ -3,7 +3,8 @@
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Installation](#installation)
-5. [Testing](#testing)
+3. [Data](#data)
+4. [Testing](#testing)
 
 
 ## Introduction
@@ -28,6 +29,38 @@ The neural network itself is implemented in the `neural_network` directory, whic
     ```bash
     pip install -r requirements.txt
     ```
+
+## Data
+The project uses the California Housing dataset (`data/housing.csv`) for demonstrating the neural network's regression capabilities. This dataset contains information about housing districts in California derived from the 1990 U.S. Census.
+
+### Dataset Overview
+- **Rows**: 20,640 housing districts
+- **Features**: 10 columns including geographical, demographic, and housing characteristics
+- **Target Variable**: `median_house_value` (median house value for households within a block)
+
+### Dataset Features
+| Feature | Description |
+|---------|-------------|
+| `longitude` | A measure of how far west a house is (higher = more west) |
+| `latitude` | A measure of how far north a house is (higher = more north) |
+| `housing_median_age` | Median age of houses within a block (higher = older) |
+| `total_rooms` | Total number of rooms within a block |
+| `total_bedrooms` | Total number of bedrooms within a block |
+| `population` | Total number of people residing within a block |
+| `households` | Total number of households within a block |
+| `median_income` | Median income for households within a block (in tens of thousands USD) |
+| `median_house_value` | Median house value for households within a block (in USD) |
+| `ocean_proximity` | Location of the house relative to ocean/sea (categorical: NEAR BAY, <1H OCEAN, INLAND, NEAR OCEAN, ISLAND) |
+
+### Data Preprocessing
+In the provided notebooks, the following preprocessing steps are applied:
+- Missing values in `total_bedrooms` (207 rows) are removed using `dropna()`
+- Geographic features (`longitude`, `latitude`) and categorical feature (`ocean_proximity`) are dropped for simplicity
+- All remaining features are standardized using `StandardScaler` from scikit-learn
+- The target variable (`median_house_value`) is also normalized for better training performance
+
+### Usage
+The dataset is used to train the neural network for a regression task, predicting median house values based on the district characteristics. The notebooks demonstrate how to load, preprocess, and use this data with the custom neural network implementation.
 
 ## Testing
 To test the project, you can use the `Colab_Housing_Test.ipynb` notebook. This notebook is designed to be run in Google Colab. Here are the steps to run the notebook:
